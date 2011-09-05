@@ -87,17 +87,16 @@ class CommandTree(object):
             readline.parse_and_bind("tab: complete")
             res = self._get_in(parent_name)
             readline.set_completer(self.rt_old_completer)
+            for child in self.descendants:
+                if res == child.name:
+                    if not child.collectable():
+                        child.runtree(self.name)
+                    else:
+                        child.collect()
             if res in self.upcmd:
                 stop = True
             elif res in self.quitcmd:
                 stop = True
-            else:
-                for child in self.descendants:
-                    if res == child.name:
-                        if not child.collectable():
-                            child.runtree(self.name)
-                        else:
-                            child.collect()
                 
     def complete(self, text, state):
         if state == 0:
